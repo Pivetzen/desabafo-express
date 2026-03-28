@@ -18,15 +18,13 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
-            flex-direction: column; /* Alterado para empilhar o anúncio */
-            justify-content: flex-start; /* Alinhado ao topo para permitir scroll */
+            flex-direction: column; /* Empilha os elementos verticalmente */
             align-items: center;
-            min-height: 100vh;
+            min-height: 100vh; /* Garante que o fundo cubra a tela toda */
             margin: 0;
-            overflow-y: auto; /* Permitir scroll se a tela for pequena */
-            padding: 20px 0;
+            overflow-y: auto; /* Permite a rolagem se o conteúdo crescer */
+            padding: 20px 0; /* Dá um respiro no topo e no final */
         }
-
         .container {
             background-color: var(--card-bg);
             padding: 2rem;
@@ -36,6 +34,8 @@
             max-width: 450px;
             text-align: center;
             border: 1px solid #333;
+            /* Removido qualquer trava de altura aqui */
+            margin-bottom: 20px; /* Espaço entre o card e o anúncio */
         }
 
         h1 { margin-bottom: 1rem; color: var(--accent-color); font-size: 1.6rem; }
