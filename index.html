@@ -30,6 +30,35 @@
             box-sizing: border-box;
         }
 
+        /* Estilo dos Banners de Anúncio Personalizados (baseados no modelo fornecido) */
+        .ad-banner-container {
+            width: 100%;
+            max-width: 380px;
+            height: 50px;
+            background-color: #eaeaea;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        .ad-banner-container a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .ad-banner-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.3s ease-in-out;
+        }
+
         .container {
             background-color: var(--card-bg);
             padding: 0.8rem 1rem;
@@ -165,7 +194,11 @@
     <!-- ANÚNCIO FIXO NO TOPO -->
     <div id="ad-container-topo" style="position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: rgba(18, 18, 18, 0.98); border-bottom: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.5);">
         <p style="font-size: 0.5rem; opacity: 0.4; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 1px; color: #fff;">Publicidade</p>
-        <div id="ad-slot-topo" style="height: 50px; display: flex; align-items: center; justify-content: center;"></div>
+        <div class="ad-banner-container" id="adContainerTopo" style="display: block;">
+            <a href="#" id="adLinkTopo" target="_blank" rel="noopener">
+                <img src="" id="adImageTopo" alt="Propaganda">
+            </a>
+        </div>
     </div>
 
     <!-- CONTEÚDO PRINCIPAL (TELA DE SETUP) -->
@@ -192,7 +225,7 @@
             <p style="font-size: 9px; color: #888; margin-bottom: 6px;">Sua doação ajuda a manter a ferramenta online.</p>
             
             <div class="flex items-center gap-2" style="display: flex; gap: 6px;">
-                <input type="text" id="inputValorDoacao" value="Digite um valor..." oninput="mascaraMoeda(this)" style="flex-grow: 1; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; padding: 4px 6px; text-align: center; color: white; font-weight: bold; font-size: 0.85rem; margin-bottom: 0;">
+                <input type="text" id="inputValorDoacao" value="R$ 5,00" oninput="mascaraMoeda(this)" style="flex-grow: 1; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; padding: 4px 6px; text-align: center; color: white; font-weight: bold; font-size: 0.85rem; margin-bottom: 0;">
                 <button onclick="gerarECopiarPixDoacao()" style="background-color: #00FF5F; color: #000; font-weight: bold; border: none; border-radius: 6px; padding: 5px 10px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap;">
                     <i class="fa-regular fa-copy"></i> Copiar Pix
                 </button>
@@ -214,9 +247,79 @@
     <!-- ANÚNCIO FIXO NO RODAPÉ -->
     <div id="ad-container-fundo" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(18, 18, 18, 0.98); border-top: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; box-shadow: 0 -2px 8px rgba(0,0,0,0.5);">
         <p style="font-size: 0.5rem; opacity: 0.4; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 1px; color: #fff;">Publicidade</p>
-        <!-- ID CORRIGIDO AQUI PARA AD-SLOT-FUNDO -->
-        <div id="ad-slot-fundo" style="height: 50px; display: flex; align-items: center; justify-content: center;"></div>
+        <div class="ad-banner-container" id="adContainerRodape" style="display: block;">
+            <a href="#" id="adLinkRodape" target="_blank" rel="noopener">
+                <img src="" id="adImageRodape" alt="Propaganda">
+            </a>
+        </div>
     </div>
+
+    <script>
+        // Lista de anúncios personalizados (Substitua as URLs das imagens e dos links de destino conforme desejar)
+        const meusAnuncios = [
+            {
+                ImagemBanner: "https://via.placeholder.com/320x50/ff3e3e/ffffff?text=Anuncio+Personalizado+1",
+                LinkDestino: "https://hotmart.com",
+                AltText: "Anúncio 1"
+            },
+            {
+                ImagemBanner: "https://via.placeholder.com/320x50/00ff88/000000?text=Anuncio+Personalizado+2",
+                LinkDestino: "https://github.com",
+                AltText: "Anúncio 2"
+            }
+        ];
+
+        let indexTopo = 0;
+        let indexRodape = 1; // Começa em um índice diferente para alternar imagens distintas se houver mais de uma
+
+        function atualizarAnunciosPersonalizados() {
+            if (meusAnuncios.length === 0) return;
+
+            // Anúncio do Topo
+            const adTopo = meusAnuncios[indexTopo];
+            const imgTopo = document.getElementById('adImageTopo');
+            const linkTopo = document.getElementById('adLinkTopo');
+
+            if (imgTopo && linkTopo && adTopo) {
+                imgTopo.style.opacity = 0;
+                linkTopo.href = adTopo.LinkDestino;
+                linkTopo.title = adTopo.AltText;
+                setTimeout(() => {
+                    imgTopo.src = adTopo.ImagemBanner;
+                    imgTopo.alt = adTopo.AltText;
+                    imgTopo.style.opacity = 1;
+                }, 150);
+            }
+
+            // Anúncio do Rodapé
+            const adRodape = meusAnuncios[indexRodape];
+            const imgRodape = document.getElementById('adImageRodape');
+            const linkRodape = document.getElementById('adLinkRodape');
+
+            if (imgRodape && linkRodape && adRodape) {
+                imgRodape.style.opacity = 0;
+                linkRodape.href = adRodape.LinkDestino;
+                linkRodape.title = adRodape.AltText;
+                setTimeout(() => {
+                    imgRodape.src = adRodape.ImagemBanner;
+                    imgRodape.alt = adRodape.AltText;
+                    imgRodape.style.opacity = 1;
+                }, 150);
+            }
+
+            // Rotaciona os índices para a próxima troca
+            indexTopo = (indexTopo + 1) % meusAnuncios.length;
+            indexRodape = (indexRodape + 1) % meusAnuncios.length;
+        }
+
+        // Inicializa os anúncios ao carregar a página e configura a rotação a cada 5 segundos
+        window.addEventListener('DOMContentLoaded', () => {
+            atualizarAnunciosPersonalizados();
+            if (meusAnuncios.length > 1) {
+                setInterval(atualizarAnunciosPersonalizados, 5000);
+            }
+        });
+    </script>
 
     <script>
         // Configurações da Chave Pix
@@ -310,59 +413,6 @@
         
             input.value = "R$ " + formatted;
         }
-    </script>
-
-    <script>
-        // Função de Auto-Refresh separada para o Topo e Fundo
-        function refreshAds() {
-            // 1. Atualizar Anúncio do Topo
-            const adSlotTopo = document.getElementById('ad-slot-topo');
-            adSlotTopo.innerHTML = ''; 
-            
-            const scriptConfigTopo = document.createElement('script');
-            scriptConfigTopo.type = 'text/javascript';
-            scriptConfigTopo.text = `
-                atOptions = {
-                    'key' : 'f95477b41aad412b789767be6416723b',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            `;
-            const scriptInvokeTopo = document.createElement('script');
-            scriptInvokeTopo.type = 'text/javascript';
-            scriptInvokeTopo.src = '//www.highperformanceformat.com/f95477b41aad412b789767be6416723b/invoke.js';
-            
-            adSlotTopo.appendChild(scriptConfigTopo);
-            adSlotTopo.appendChild(scriptInvokeTopo);
-
-            // 2. Atualizar Anúncio do Fundo (usando o novo ID independente)
-            const adSlotFundo = document.getElementById('ad-slot-fundo');
-            adSlotFundo.innerHTML = ''; 
-            
-            const scriptConfigFundo = document.createElement('script');
-            scriptConfigFundo.type = 'text/javascript';
-            scriptConfigFundo.text = `
-                atOptions = {
-                    'key' : 'f95477b41aad412b789767be6416723b',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            `;
-            const scriptInvokeFundo = document.createElement('script');
-            scriptInvokeFundo.type = 'text/javascript';
-            scriptInvokeFundo.src = '//www.highperformanceformat.com/f95477b41aad412b789767be6416723b/invoke.js';
-            
-            adSlotFundo.appendChild(scriptConfigFundo);
-            adSlotFundo.appendChild(scriptInvokeFundo);
-        }
-
-        // Inicia os anúncios e define o ciclo de 30 segundos
-        refreshAds();
-        setInterval(refreshAds, 30000);
     </script>
 
     <script>
