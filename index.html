@@ -27,6 +27,12 @@
             overflow-y: auto; /* Permite a rolagem se o conteúdo crescer */
             padding: 1px 0; /* Dá um respiro no topo e no final */
         }
+        
+        /* Ajuste do corpo para dar espaço ao banner fixo no topo */
+        body {
+            padding-top: 75px;
+        }
+
         .container {
             background-color: var(--card-bg);
             padding: 1rem; /* Reduzi de 2rem para 1rem */
@@ -158,6 +164,12 @@
 </head>
 <body>
 
+    <!-- ANÚNCIO FIXO NO TOPO -->
+    <div id="ad-container-topo" style="position: fixed; top: 0; left: 0; width: 100%; background: rgba(18, 18, 18, 0.95); border-bottom: 1px solid #333; padding: 5px 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+        <p style="font-size: 0.55rem; opacity: 0.4; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; color: #fff;">Publicidade</p>
+        <div id="ad-slot-topo"></div>
+    </div>
+
     <div class="container" id="setup-screen">
         <h1>DESABAFO EXPRESS 🤬</h1>
         <p>Escreva o que te irritou:</p>
@@ -199,13 +211,13 @@
         <button id="btn-cancelar" onclick="resetar()">Me acalmei (ou alguém chegou)</button>
     </div>
     
-    <div id="ad-container" style="margin: 10px auto; width: 320px; display: flex; flex-direction: column; align-items: center;">
+    <div id="ad-container" style="margin: 15px auto; width: 320px; display: flex; flex-direction: column; align-items: center;">
         <p style="font-size: 0.6rem; opacity: 0.4; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">Publicidade</p>
         <div id="ad-slot"></div>
     </div>
 
     <script>
-        // Configurações da Chave Pix (Pode alterar para os seus dados reais)
+        // Configurações da Chave Pix
         const CHAVE_PIX_RECEPTOR = "matheuzzu@hotmail.com"; 
         const NOME_RECEPTOR = "MATHEUS ARRUDA MAIA";                  
         const CIDADE_RECEPTOR = "FORTALEZA";                        
@@ -299,8 +311,31 @@
     </script>
 
     <script>
-        // Função de Auto-Refresh para o Adsterra
-        function refreshAd() {
+        // Função de Auto-Refresh para os Anúncios do Adsterra (Topo e Fundo)
+        function refreshAds() {
+            // Atualizar Anúncio do Topo
+            const adSlotTopo = document.getElementById('ad-slot-topo');
+            adSlotTopo.innerHTML = ''; 
+            
+            const scriptConfigTopo = document.createElement('script');
+            scriptConfigTopo.type = 'text/javascript';
+            scriptConfigTopo.text = `
+                atOptions = {
+                    'key' : 'f95477b41aad412b789767be6416723b',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            `;
+            const scriptInvokeTopo = document.createElement('script');
+            scriptInvokeTopo.type = 'text/javascript';
+            scriptInvokeTopo.src = '//www.highperformanceformat.com/f95477b41aad412b789767be6416723b/invoke.js';
+            
+            adSlotTopo.appendChild(scriptConfigTopo);
+            adSlotTopo.appendChild(scriptInvokeTopo);
+
+            // Atualizar Anúncio do Fundo
             const adSlot = document.getElementById('ad-slot');
             adSlot.innerHTML = ''; 
             
@@ -315,7 +350,6 @@
                     'params' : {}
                 };
             `;
-            
             const scriptInvoke = document.createElement('script');
             scriptInvoke.type = 'text/javascript';
             scriptInvoke.src = '//www.highperformanceformat.com/f95477b41aad412b789767be6416723b/invoke.js';
@@ -324,8 +358,9 @@
             adSlot.appendChild(scriptInvoke);
         }
 
-        refreshAd();
-        setInterval(refreshAd, 30000);
+        // Inicia os anúncios e define o ciclo de 30 segundos
+        refreshAds();
+        setInterval(refreshAds, 30000);
     </script>
 
     <script>
