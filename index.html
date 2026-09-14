@@ -22,11 +22,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between; /* Distribui o espaço entre topo, conteúdo e rodapé */
-            height: 100vh; /* Trava a altura exatamente na tela visível */
+            justify-content: space-between;
+            height: 100vh;
             margin: 0;
-            overflow: hidden; /* Remove completamente a barra de rolagem */
-            padding: 65px 0 65px 0; /* Espaços reservados para os anúncios fixos de topo e fundo */
+            overflow: hidden;
+            padding: 65px 0 65px 0;
             box-sizing: border-box;
         }
 
@@ -39,7 +39,7 @@
             max-width: 380px;
             text-align: center;
             border: 1px solid #333;
-            margin: auto 0; /* Centraliza verticalmente no espaço livre */
+            margin: auto 0;
         }
 
         h1 { margin: 0 0 0.3rem 0; color: var(--accent-color); font-size: 1.2rem; }
@@ -89,7 +89,7 @@
 
         @keyframes shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            10px { transform: translate(-1px, -2px) rotate(-1deg); }
             20% { transform: translate(-3px, 0px) rotate(1deg); }
             100% { transform: translate(1px, 1px) rotate(0deg); }
         }
@@ -214,7 +214,8 @@
     <!-- ANÚNCIO FIXO NO RODAPÉ -->
     <div id="ad-container-fundo" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(18, 18, 18, 0.98); border-top: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; box-shadow: 0 -2px 8px rgba(0,0,0,0.5);">
         <p style="font-size: 0.5rem; opacity: 0.4; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 1px; color: #fff;">Publicidade</p>
-        <div id="ad-slot" style="height: 50px; display: flex; align-items: center; justify-content: center;"></div>
+        <!-- ID CORRIGIDO AQUI PARA AD-SLOT-FUNDO -->
+        <div id="ad-slot-fundo" style="height: 50px; display: flex; align-items: center; justify-content: center;"></div>
     </div>
 
     <script>
@@ -312,9 +313,9 @@
     </script>
 
     <script>
-        // Função de Auto-Refresh para os Anúncios do Adsterra (Topo e Fundo)
+        // Função de Auto-Refresh separada para o Topo e Fundo
         function refreshAds() {
-            // Atualizar Anúncio do Topo
+            // 1. Atualizar Anúncio do Topo
             const adSlotTopo = document.getElementById('ad-slot-topo');
             adSlotTopo.innerHTML = ''; 
             
@@ -336,13 +337,13 @@
             adSlotTopo.appendChild(scriptConfigTopo);
             adSlotTopo.appendChild(scriptInvokeTopo);
 
-            // Atualizar Anúncio do Fundo
-            const adSlot = document.getElementById('ad-slot');
-            adSlot.innerHTML = ''; 
+            // 2. Atualizar Anúncio do Fundo (usando o novo ID independente)
+            const adSlotFundo = document.getElementById('ad-slot-fundo');
+            adSlotFundo.innerHTML = ''; 
             
-            const scriptConfig = document.createElement('script');
-            scriptConfig.type = 'text/javascript';
-            scriptConfig.text = `
+            const scriptConfigFundo = document.createElement('script');
+            scriptConfigFundo.type = 'text/javascript';
+            scriptConfigFundo.text = `
                 atOptions = {
                     'key' : 'f95477b41aad412b789767be6416723b',
                     'format' : 'iframe',
@@ -351,12 +352,12 @@
                     'params' : {}
                 };
             `;
-            const scriptInvoke = document.createElement('script');
-            scriptInvoke.type = 'text/javascript';
-            scriptInvoke.src = '//www.highperformanceformat.com/f95477b41aad412b789767be6416723b/invoke.js';
+            const scriptInvokeFundo = document.createElement('script');
+            scriptInvokeFundo.type = 'text/javascript';
+            scriptInvokeFundo.src = '//www.highperformanceformat.com/f95477b41aad412b789767be6416723b/invoke.js';
             
-            adSlot.appendChild(scriptConfig);
-            adSlot.appendChild(scriptInvoke);
+            adSlotFundo.appendChild(scriptConfigFundo);
+            adSlotFundo.appendChild(scriptInvokeFundo);
         }
 
         // Inicia os anúncios e define o ciclo de 30 segundos
