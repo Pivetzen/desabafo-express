@@ -441,7 +441,7 @@
 
     <!-- Script de Inicialização do Stripe / Carteiras Digitais -->
     <script>
-        // SEU TOKEN DO STRIPE AQUI
+        // Substitua por 'pk_live_...' assim que ativar a conta no Stripe
         const stripe = Stripe('pk_test_51UJtg55za26L88QrFp8w5PVKFDPbPnJU3afov2C16lYwipoNUk46mBYr9AiX8dHN90jAymsWjyl9p1LmS8YLJhTg00K99gqHIQ');
 
         let paymentRequest;
@@ -480,7 +480,6 @@
                 },
             });
 
-            // Exibe o botão de pagamento caso o dispositivo do visitante seja compatível
             paymentRequest.canMakePayment().then(function(result) {
                 if (result) {
                     prButton.mount('#payment-request-button');
@@ -490,9 +489,8 @@
             });
 
             paymentRequest.on('paymentmethod', async (ev) => {
-                // Notifica sucesso visual para o doador
                 ev.complete('success');
-                alert('Obrigado pela sua doação!');
+                alert('Muito obrigado pela sua doação! ❤️');
             });
         }
 
