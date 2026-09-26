@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DESABAFO EXPRESS 🤬</title>
-    <!-- Ícones FontAwesome (necessários para os ícones de coração, cópia e sucesso) -->
+    <!-- Ícones FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SDK Oficial do Stripe para suporte a Google Pay / Apple Pay -->
+    <script src="https://js.stripe.com/v3/"></script>
+
     <style>
         :root {
             --bg-color: #121212;
@@ -30,7 +34,7 @@
             box-sizing: border-box;
         }
 
-        /* Estilo dos Banners de Anúncio Personalizados (baseados no modelo fornecido) */
+        /* Estilo dos Banners de Anúncio Personalizados */
         .ad-banner-container {
             width: 100%;
             max-width: 380px;
@@ -175,7 +179,7 @@
             font-size: 0.85rem;
         }
 
-        /* Estilo da Seção de Doação Pix Copia e Cola */
+        /* Estilo da Seção de Doação (Pix e Stripe) */
         .pagamento-footer {
             margin-top: 10px;
             padding-top: 8px;
@@ -186,6 +190,20 @@
         .pagamento-footer p {
             font-size: 0.75rem;
             margin-bottom: 4px;
+        }
+
+        .botoes-doacao-container {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .botoes-doacao-container > * {
+            flex: 1;
+        }
+
+        #payment-request-button {
+            min-height: 35px;
         }
     </style>
 </head>
@@ -217,19 +235,24 @@
 
         <button id="start-btn" onclick="iniciarSessao()">COMEÇAR TERAPIA</button>
         
-        <!-- SEÇÃO DE DOAÇÃO PIX -->
+        <!-- SEÇÃO DE DOAÇÃO PIX E GOOGLE / APPLE PAY -->
         <div class="pagamento-footer">
             <p class="font-semibold text-slate-200 mb-0.5 flex items-center gap-1" style="color: #e0e0e0;">
                 <i class="fa-solid fa-heart text-red-500"></i> Curtiu? Apoie o desenvolvedor!
             </p>
             <p style="font-size: 9px; color: #888; margin-bottom: 6px;">Sua doação ajuda a manter a ferramenta online.</p>
             
-            <div class="flex items-center gap-2" style="display: flex; gap: 6px;">
-                <input type="text" id="inputValorDoacao" value="Digite um valor..." oninput="mascaraMoeda(this)" style="flex-grow: 1; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; padding: 4px 6px; text-align: center; color: white; font-weight: bold; font-size: 0.85rem; margin-bottom: 0;">
-                <button onclick="gerarECopiarPixDoacao()" style="background-color: #00FF5F; color: #000; font-weight: bold; border: none; border-radius: 6px; padding: 5px 10px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap;">
+            <input type="text" id="inputValorDoacao" value="Digite um valor..." oninput="mascaraMoeda(this); atualizarValorStripe();" style="width: 100%; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; padding: 5px 6px; text-align: center; color: white; font-weight: bold; font-size: 0.85rem; margin-bottom: 0; box-sizing: border-box;">
+
+            <div class="botoes-doacao-container">
+                <button onclick="gerarECopiarPixDoacao()" style="background-color: #00FF5F; color: #000; font-weight: bold; border: none; border-radius: 6px; padding: 8px 6px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap; height: 35px;">
                     <i class="fa-regular fa-copy"></i> Copiar Pix
                 </button>
+                
+                <!-- Container nativo onde o Stripe renderiza o botão do Google Pay / Apple Pay -->
+                <div id="payment-request-button"></div>
             </div>
+
             <p id="msgSucessoPix" style="font-size: 9px; color: #00ff88; font-weight: bold; margin-top: 4px; display: none;">
                 <i class="fa-solid fa-check-circle"></i> Pix Copia e Cola copiado! Acesse seu banco.
             </p>
@@ -255,7 +278,7 @@
     </div>
 
     <script>
-        // Lista de anúncios personalizados (Substitua as URLs das imagens e dos links de destino conforme desejar)
+        // Lista de anúncios personalizados
         const meusAnuncios = [
             {
                 ImagemBanner: "Anuncios/Anuncios-psi.png",
@@ -275,12 +298,11 @@
         ];
 
         let indexTopo = 0;
-        let indexRodape = 1; // Começa em um índice diferente para alternar imagens distintas se houver mais de uma
+        let indexRodape = 1;
 
         function atualizarAnunciosPersonalizados() {
             if (meusAnuncios.length === 0) return;
 
-            // Anúncio do Topo
             const adTopo = meusAnuncios[indexTopo];
             const imgTopo = document.getElementById('adImageTopo');
             const linkTopo = document.getElementById('adLinkTopo');
@@ -296,7 +318,6 @@
                 }, 150);
             }
 
-            // Anúncio do Rodapé
             const adRodape = meusAnuncios[indexRodape];
             const imgRodape = document.getElementById('adImageRodape');
             const linkRodape = document.getElementById('adLinkRodape');
@@ -312,12 +333,10 @@
                 }, 150);
             }
 
-            // Rotaciona os índices para a próxima troca
             indexTopo = (indexTopo + 1) % meusAnuncios.length;
             indexRodape = (indexRodape + 1) % meusAnuncios.length;
         }
 
-        // Inicializa os anúncios ao carregar a página e configura a rotação a cada 5 segundos
         window.addEventListener('DOMContentLoaded', () => {
             atualizarAnunciosPersonalizados();
             if (meusAnuncios.length > 1) {
@@ -343,7 +362,7 @@
             const merchantAccount = formatField('26', `${gui}${key}`);
             
             const categoryCode = formatField('52', '0000');
-            const currency = formatField('53', '986'); // BRL
+            const currency = formatField('53', '986');
             const amountStr = parseFloat(valor).toFixed(2);
             const amount = formatField('54', amountStr);
             const country = formatField('58', 'BR');
@@ -418,6 +437,80 @@
         
             input.value = "R$ " + formatted;
         }
+    </script>
+
+    <!-- Script de Inicialização do Stripe / Carteiras Digitais -->
+    <script>
+        // SEU TOKEN DO STRIPE AQUI
+        const stripe = Stripe('pk_test_51UJtg55za26L88QrFp8w5PVKFDPbPnJU3afov2C16lYwipoNUk46mBYr9AiX8dHN90jAymsWjyl9p1LmS8YLJhTg00K99gqHIQ');
+
+        let paymentRequest;
+        let prButton;
+
+        function obterValorEmCentavos() {
+            const inputElement = document.getElementById('inputValorDoacao');
+            let rawDigits = inputElement.value.replace(/\D/g, "");
+            if (!rawDigits) return 0;
+            return parseInt(rawDigits, 10);
+        }
+
+        function inicializarStripePaymentRequest() {
+            const valorEmCentavos = obterValorEmCentavos() || 500; // Valor padrão de R$ 5,00
+
+            paymentRequest = stripe.paymentRequest({
+                country: 'BR',
+                currency: 'brl',
+                total: {
+                    label: 'Doação Desabafo Express',
+                    amount: valorEmCentavos,
+                },
+                requestPayerName: true,
+                requestPayerEmail: true,
+            });
+
+            const elements = stripe.elements();
+            prButton = elements.create('paymentRequestButton', {
+                paymentRequest: paymentRequest,
+                style: {
+                    paymentRequestButton: {
+                        type: 'donate',
+                        theme: 'dark',
+                        height: '35px',
+                    },
+                },
+            });
+
+            // Exibe o botão de pagamento caso o dispositivo do visitante seja compatível
+            paymentRequest.canMakePayment().then(function(result) {
+                if (result) {
+                    prButton.mount('#payment-request-button');
+                } else {
+                    document.getElementById('payment-request-button').style.display = 'none';
+                }
+            });
+
+            paymentRequest.on('paymentmethod', async (ev) => {
+                // Notifica sucesso visual para o doador
+                ev.complete('success');
+                alert('Obrigado pela sua doação!');
+            });
+        }
+
+        function atualizarValorStripe() {
+            const valorEmCentavos = obterValorEmCentavos();
+            if (paymentRequest && valorEmCentavos > 0) {
+                paymentRequest.update({
+                    total: {
+                        label: 'Doação Desabafo Express',
+                        amount: valorEmCentavos,
+                    },
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarStripePaymentRequest();
+        });
     </script>
 
     <script>
