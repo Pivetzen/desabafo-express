@@ -312,6 +312,85 @@
             margin-top: 2px;
             line-height: 1.1;
         }
+
+        /* --- POPUP DE FIM DE SESSÃO --- */
+        .session-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 2000;
+        }
+
+        .session-modal-card {
+            background-color: var(--card-bg);
+            border: 1px solid #3a3a3a;
+            border-radius: 16px;
+            padding: 1.2rem 1rem;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+        }
+
+        .session-modal-title {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .session-modal-text {
+            margin: 0 0 1rem 0;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            line-height: 1.4;
+        }
+
+        .session-modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-psi-online {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            background-color: #2563eb;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 10px 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-psi-online:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-fechar-popup {
+            background: transparent;
+            border: 1px solid #555;
+            color: #bbb;
+            font-weight: 600;
+            font-size: 0.82rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-fechar-popup:hover {
+            border-color: #888;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -391,6 +470,24 @@
         <div id="display-mantra"></div>
         <div id="timer">00</div>
         <button id="btn-cancelar" onclick="resetar()">Me acalmei (ou alguém chegou)</button>
+    </div>
+
+    <!-- POPUP DE CONCLUSÃO DA SESSÃO -->
+    <div id="session-end-modal" class="session-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sessionModalTitle">
+        <div class="session-modal-card">
+            <h2 id="sessionModalTitle" class="session-modal-title">Sessão finalizada. Aliviado?</h2>
+            <p class="session-modal-text">
+                Se você tiver interesse, sugerimos um atendimento especializado de psicologia online.
+            </p>
+            <div class="session-modal-actions">
+                <a href="https://rayssamacedo.github.io/psicologa/" target="_blank" rel="noopener noreferrer" class="btn-psi-online">
+                    <i class="fa-solid fa-comments"></i> Conhecer atendimento online
+                </a>
+                <button type="button" class="btn-fechar-popup" onclick="fecharPopupSessao()">
+                    Fechar
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- ANÚNCIO FIXO NO RODAPÉ -->
@@ -586,12 +683,23 @@
             sintetizador.speak(fala);
         }
 
+        function abrirPopupSessao() {
+            const modal = document.getElementById('session-end-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function fecharPopupSessao() {
+            const modal = document.getElementById('session-end-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
         function iniciarSessao() {
             if (tempoSelecionado === 0) {
                 alert("Selecione o quanto você está puto primeiro!");
                 return;
             }
 
+            fecharPopupSessao();
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('timer-screen').classList.remove('hidden');
 
@@ -616,8 +724,10 @@
                 if (tempoRestante <= 0) {
                     clearInterval(countdown);
                     falar("Pronto. Agora respira fundo e volta a trabalhar.");
-                    setTimeout(() => alert("Sessão finalizada. Aliviado?"), 500);
-                    resetar();
+                    setTimeout(() => {
+                        resetar();
+                        abrirPopupSessao();
+                    }, 500);
                 }
             }, 1000);
         }
