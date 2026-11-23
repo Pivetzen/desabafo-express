@@ -469,7 +469,7 @@
         <h2 style="color: #888; font-size: 1rem; margin: 0 0 5px 0;">NÃO PARE DE REPETIR:</h2>
         <div id="display-mantra"></div>
         <div id="timer">00</div>
-        <button id="btn-cancelar" onclick="resetar()">Me acalmei (ou alguém chegou)</button>
+        <button id="btn-cancelar" onclick="encerrarAntecipadamente()">Me acalmei (ou alguém chegou)</button>
     </div>
 
     <!-- POPUP DE CONCLUSÃO DA SESSÃO -->
@@ -730,6 +730,11 @@
                     }, 500);
                 }
             }, 1000);
+        }
+
+        function encerrarAntecipadamente() {
+            resetar();
+            abrirPopupSessao();
         }
 
         function resetar() {
