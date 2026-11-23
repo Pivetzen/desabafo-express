@@ -6,15 +6,13 @@
     <title>DESABAFO EXPRESS 🤬</title>
     <!-- Ícones FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- SDK Oficial do Stripe para suporte a Google Pay / Apple Pay -->
-    <script src="https://js.stripe.com/v3/"></script>
 
     <style>
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --text-color: #e0e0e0;
+            --text-muted: #9ca3af;
             --accent-color: #ff3e3e;
             --success: #00ff88;
         }
@@ -113,8 +111,8 @@
         .baixo { background-color: #4cd137; }
         .medio { background-color: #fbc531; }
         .alto { background-color: #e67e22; }
-        .aaaa { 
-            background-color: #c23616; 
+        .aaaa {
+            background-color: #c23616;
             color: white;
             grid-column: span 3;
             animation: shake 0.5s infinite;
@@ -122,12 +120,12 @@
 
         @keyframes shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
-            10px { transform: translate(-1px, -2px) rotate(-1deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
             20% { transform: translate(-3px, 0px) rotate(1deg); }
             100% { transform: translate(1px, 1px) rotate(0deg); }
         }
 
-        .active { 
+        .active {
             box-shadow: 0 0 12px white;
             transform: scale(1.03);
             outline: 2px solid white;
@@ -179,31 +177,140 @@
             font-size: 0.85rem;
         }
 
-        /* Estilo da Seção de Doação (Pix e Stripe) */
+        /* --- SEÇÃO DE DOAÇÃO (PADRÃO DOAÇÃO / INFINITEPAY) --- */
         .pagamento-footer {
             margin-top: 10px;
             padding-top: 8px;
             border-top: 1px solid #333;
             text-align: left;
         }
-        
-        .pagamento-footer p {
-            font-size: 0.75rem;
-            margin-bottom: 4px;
-        }
 
-        .botoes-doacao-container {
+        .donation-header-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 2px;
             display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .donation-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            line-height: 1.25;
+        }
+
+        .donation-controls {
+            display: flex;
+            align-items: center;
             gap: 6px;
-            margin-top: 6px;
         }
 
-        .botoes-doacao-container > * {
+        .donation-input {
             flex: 1;
+            min-width: 0;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-align: center;
+            outline: none;
+            box-sizing: border-box;
         }
 
-        #payment-request-button {
-            min-height: 35px;
+        .donation-input:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.25);
+        }
+
+        .btn-pix {
+            background-color: #059669;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 7px 11px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+            height: 33px;
+        }
+
+        .btn-pix:hover {
+            background-color: #047857;
+        }
+
+        .pix-success-msg {
+            font-size: 0.7rem;
+            color: var(--success);
+            font-weight: 600;
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 0;
+            display: none;
+        }
+
+        .infinitepay-divider {
+            border-top: 1px solid #2e2e2e;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .infinitepay-text {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .infinitepay-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            width: 100%;
+        }
+
+        .btn-infinitepay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 2px;
+            background-color: #00D632;
+            color: #000000;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            transition: transform 0.1s, background-color 0.15s;
+        }
+
+        .btn-infinitepay:hover { background-color: #00B82B; }
+        .btn-infinitepay:active { transform: scale(0.95); }
+
+        .btn-infinitepay .label-doar {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            opacity: 0.85;
+            line-height: 1;
+        }
+
+        .btn-infinitepay .label-valor {
+            font-size: 0.76rem;
+            font-weight: 800;
+            margin-top: 2px;
+            line-height: 1.1;
         }
     </style>
 </head>
@@ -224,7 +331,7 @@
         <h1>DESABAFO EXPRESS 🤬</h1>
         <p>Escreva o que te irritou:</p>
         <textarea id="motivo" rows="2" placeholder="Aquele e-mail às 18h..."></textarea>
-        
+
         <p>Nível de Ódio:</p>
         <div class="termometro">
             <button class="btn-nivel baixo" onclick="setNivel('baixo', 10, this)">Baixo (10s)</button>
@@ -234,28 +341,47 @@
         </div>
 
         <button id="start-btn" onclick="iniciarSessao()">COMEÇAR TERAPIA</button>
-        
-        <!-- SEÇÃO DE DOAÇÃO PIX E GOOGLE / APPLE PAY -->
-        <div class="pagamento-footer">
-            <p class="font-semibold text-slate-200 mb-0.5 flex items-center gap-1" style="color: #e0e0e0;">
-                <i class="fa-solid fa-heart text-red-500"></i> Curtiu? Apoie o desenvolvedor!
-            </p>
-            <p style="font-size: 9px; color: #888; margin-bottom: 6px;">Sua doação ajuda a manter a ferramenta online.</p>
-            
-            <input type="text" id="inputValorDoacao" value="Digite um valor..." oninput="mascaraMoeda(this); atualizarValorStripe();" style="width: 100%; background: #2a2a2a; border: 1px solid #444; border-radius: 6px; padding: 5px 6px; text-align: center; color: white; font-weight: bold; font-size: 0.85rem; margin-bottom: 0; box-sizing: border-box;">
 
-            <div class="botoes-doacao-container">
-                <button onclick="gerarECopiarPixDoacao()" style="background-color: #00FF5F; color: #000; font-weight: bold; border: none; border-radius: 6px; padding: 8px 6px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; white-space: nowrap; height: 35px;">
+        <!-- SEÇÃO DE DOAÇÃO PIX E INFINITEPAY -->
+        <div class="pagamento-footer">
+            <div class="donation-header-title">
+                <i class="fa-solid fa-heart" style="color: #ef4444;"></i> Curtiu? Apoie o desenvolvedor!
+            </div>
+            <p class="donation-subtitle">Sua contribuição ajuda a manter a ferramenta online.</p>
+
+            <!-- Opção 1: Pix Personalizado -->
+            <div class="donation-controls">
+                <input type="text" id="inputValorDoacao" value="Digite um valor..." inputmode="decimal" pattern="[0-9]*" oninput="mascaraMoeda(this)" class="donation-input">
+                <button type="button" onclick="gerarECopiarPixDoacao()" class="btn-pix">
                     <i class="fa-regular fa-copy"></i> Copiar Pix
                 </button>
-                
-                <!-- Container nativo onde o Stripe renderiza o botão do Google Pay / Apple Pay -->
-                <div id="payment-request-button"></div>
             </div>
-
-            <p id="msgSucessoPix" style="font-size: 9px; color: #00ff88; font-weight: bold; margin-top: 4px; display: none;">
-                <i class="fa-solid fa-check-circle"></i> Pix Copia e Cola copiado! Acesse seu banco.
+            <p id="msgSucessoPix" class="pix-success-msg">
+                <i class="fa-solid fa-check-circle"></i> Código Pix Copia e Cola copiado! Abra seu banco para pagar.
             </p>
+
+            <!-- Opção 2: InfinitePay -->
+            <div class="infinitepay-divider">
+                <p class="infinitepay-text">Ou escolha um valor rápido via Cartão / Pix (InfinitePay):</p>
+                <div class="infinitepay-grid">
+                    <a href="https://link.infinitepay.io/matheusmaia_32/VC1BLUEtSQ-sTlL5IePTQ-10,00" target="_blank" rel="noopener noreferrer" class="btn-infinitepay">
+                        <span class="label-doar">Doar</span>
+                        <span class="label-valor">R$ 10</span>
+                    </a>
+                    <a href="https://link.infinitepay.io/matheusmaia_32/VC1DLUMtSQ-xL8lVxgLO0-50,00" target="_blank" rel="noopener noreferrer" class="btn-infinitepay">
+                        <span class="label-doar">Doar</span>
+                        <span class="label-valor">R$ 50</span>
+                    </a>
+                    <a href="https://link.infinitepay.io/matheusmaia_32/VC1DLUMtSQ-7uZQXCY1fs-100,00" target="_blank" rel="noopener noreferrer" class="btn-infinitepay">
+                        <span class="label-doar">Doar</span>
+                        <span class="label-valor">R$ 100</span>
+                    </a>
+                    <a href="https://link.infinitepay.io/matheusmaia_32/VC1DLUMtSQ-FoXoBv2yil-200,00" target="_blank" rel="noopener noreferrer" class="btn-infinitepay">
+                        <span class="label-doar">Doar</span>
+                        <span class="label-valor">R$ 200</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -266,7 +392,7 @@
         <div id="timer">00</div>
         <button id="btn-cancelar" onclick="resetar()">Me acalmei (ou alguém chegou)</button>
     </div>
-    
+
     <!-- ANÚNCIO FIXO NO RODAPÉ -->
     <div id="ad-container-fundo" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; background: rgba(18, 18, 18, 0.98); border-top: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; box-shadow: 0 -2px 8px rgba(0,0,0,0.5);">
         <p style="font-size: 0.5rem; opacity: 0.4; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 1px; color: #fff;">Publicidade</p>
@@ -347,20 +473,20 @@
 
     <script>
         // Configurações da Chave Pix
-        const CHAVE_PIX_RECEPTOR = "matheuzzu@hotmail.com"; 
-        const NOME_RECEPTOR = "MATHEUS ARRUDA MAIA";                  
-        const CIDADE_RECEPTOR = "FORTALEZA";                        
-    
+        const CHAVE_PIX_RECEPTOR = "matheuzzu@hotmail.com";
+        const NOME_RECEPTOR = "MATHEUS ARRUDA MAIA";
+        const CIDADE_RECEPTOR = "FORTALEZA";
+
         function gerarPayloadPix(chave, nome, cidade, valor, txid = "***") {
             function formatField(id, value) {
                 const len = value.length.toString().padStart(2, '0');
                 return `${id}${len}${value}`;
             }
-    
+
             const gui = formatField('00', 'br.gov.bcb.pix');
             const key = formatField('01', chave);
             const merchantAccount = formatField('26', `${gui}${key}`);
-            
+
             const categoryCode = formatField('52', '0000');
             const currency = formatField('53', '986');
             const amountStr = parseFloat(valor).toFixed(2);
@@ -369,9 +495,9 @@
             const name = formatField('59', nome.substring(0, 25));
             const city = formatField('60', cidade.substring(0, 15));
             const additionalData = formatField('62', formatField('05', txid));
-    
+
             let payload = `000201${merchantAccount}${categoryCode}${currency}${amount}${country}${name}${city}${additionalData}6304`;
-            
+
             function crc16(str) {
                 let crc = 0xFFFF;
                 for (let i = 0; i < str.length; i++) {
@@ -386,28 +512,28 @@
                 }
                 return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
             }
-    
+
             return payload + crc16(payload);
         }
-    
+
         function gerarECopiarPixDoacao() {
             const inputElement = document.getElementById('inputValorDoacao');
             let rawDigits = inputElement.value.replace(/\D/g, "");
-            
-            if (!rawDigits) {
+
+            if (!rawDigits || rawDigits === "00") {
                 alert('Por favor, informe um valor de doação válido.');
                 return;
             }
-        
+
             const valor = parseFloat(rawDigits) / 100;
-        
+
             if (isNaN(valor) || valor <= 0) {
                 alert('Por favor, informe um valor de doação válido.');
                 return;
             }
-        
+
             const pixPayload = gerarPayloadPix(CHAVE_PIX_RECEPTOR, NOME_RECEPTOR, CIDADE_RECEPTOR, valor);
-        
+
             navigator.clipboard.writeText(pixPayload).then(() => {
                 const msg = document.getElementById('msgSucessoPix');
                 if (msg) {
@@ -424,91 +550,19 @@
         // Máscara monetária acumulativa
         function mascaraMoeda(input) {
             let value = input.value.replace(/\D/g, "");
-            
+
             if (!value || value === "00") {
-                input.value = "R$ 0,00";
+                input.value = "Digite um valor...";
                 return;
             }
-            
+
             let numberValue = (parseInt(value, 10) / 100).toFixed(2);
             let formatted = numberValue
                 .replace(".", ",")
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
-        
+
             input.value = "R$ " + formatted;
         }
-    </script>
-
-    <!-- Script de Inicialização do Stripe / Carteiras Digitais -->
-    <script>
-        // Substitua por 'pk_live_...' assim que ativar a conta no Stripe
-        const stripe = Stripe('pk_test_51UJtg55za26L88QrFp8w5PVKFDPbPnJU3afov2C16lYwipoNUk46mBYr9AiX8dHN90jAymsWjyl9p1LmS8YLJhTg00K99gqHIQ');
-
-        let paymentRequest;
-        let prButton;
-
-        function obterValorEmCentavos() {
-            const inputElement = document.getElementById('inputValorDoacao');
-            let rawDigits = inputElement.value.replace(/\D/g, "");
-            if (!rawDigits) return 0;
-            return parseInt(rawDigits, 10);
-        }
-
-        function inicializarStripePaymentRequest() {
-            const valorEmCentavos = obterValorEmCentavos() || 500; // Valor padrão de R$ 5,00
-
-            paymentRequest = stripe.paymentRequest({
-                country: 'BR',
-                currency: 'brl',
-                total: {
-                    label: 'Doação Desabafo Express',
-                    amount: valorEmCentavos,
-                },
-                requestPayerName: true,
-                requestPayerEmail: true,
-            });
-
-            const elements = stripe.elements();
-            prButton = elements.create('paymentRequestButton', {
-                paymentRequest: paymentRequest,
-                style: {
-                    paymentRequestButton: {
-                        type: 'donate',
-                        theme: 'dark',
-                        height: '35px',
-                    },
-                },
-            });
-
-            paymentRequest.canMakePayment().then(function(result) {
-                if (result) {
-                    prButton.mount('#payment-request-button');
-                } else {
-                    document.getElementById('payment-request-button').style.display = 'none';
-                }
-            });
-
-            paymentRequest.on('paymentmethod', async (ev) => {
-                ev.complete('success');
-                alert('Muito obrigado pela sua doação! ❤️');
-            });
-        }
-
-        function atualizarValorStripe() {
-            const valorEmCentavos = obterValorEmCentavos();
-            if (paymentRequest && valorEmCentavos > 0) {
-                paymentRequest.update({
-                    total: {
-                        label: 'Doação Desabafo Express',
-                        amount: valorEmCentavos,
-                    },
-                });
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            inicializarStripePaymentRequest();
-        });
     </script>
 
     <script>
@@ -540,11 +594,11 @@
 
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('timer-screen').classList.remove('hidden');
-            
+
             let tempoRestante = tempoSelecionado;
             const displayTimer = document.getElementById('timer');
             const displayMantra = document.getElementById('display-mantra');
-            
+
             const fraseInicial = frases[Math.floor(Math.random() * frases.length)];
             displayMantra.innerText = fraseInicial;
             falar(fraseInicial);
